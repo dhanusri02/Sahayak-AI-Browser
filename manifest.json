@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Sahayak - AI Browser Side-Panel Agent",
+  "version": "1.0.0",
+  "description": "User-controlled Chrome side-panel AI agent that understands the current web page, summarizes content in English/Hinglish, and safely executes approved browser actions.",
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open Sahayak Side Panel"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["safety.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

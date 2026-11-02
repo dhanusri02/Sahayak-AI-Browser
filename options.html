@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sahayak - Settings & Local Profile</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="settings-container">
+    <!-- Header -->
+    <header class="settings-header">
+      <div class="header-brand">
+        <div class="brand-avatar">✨</div>
+        <div class="brand-titles">
+          <h1>Sahayak Settings &amp; Local Profile</h1>
+          <p>Configure Gemini API, manage your local autofill profile, and customize safety rules.</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-save-all" class="primary-btn glow-btn">
+          💾 Save Settings
+        </button>
+      </div>
+    </header>
+
+    <div class="settings-grid">
+      <!-- Left Column: Gemini API & Local Profile -->
+      <div class="settings-column">
+
+        <!-- 1. Gemini API Setup -->
+        <section class="settings-card">
+          <div class="card-title-row">
+            <span class="card-icon">⚡</span>
+            <div>
+              <h2>Gemini API Configuration</h2>
+              <p class="card-subtitle">Connect your free Google AI Studio key or use the built-in local engine.</p>
+            </div>
+          </div>
+
+          <div class="api-help-box">
+            <strong>🎁 Free Tier Ready:</strong> Get a 100% free Gemini API key with generous limits from
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio ↗</a>.
+            If left blank, Sahayak automatically uses its intelligent on-device local heuristic engine!
+          </div>
+
+          <div class="form-group">
+            <label for="input-api-key">Gemini API Key</label>
+            <div class="input-with-action">
+              <input
+                type="password"
+                id="input-api-key"
+                class="form-control"
+                placeholder="AIzaSy... (leave blank to use local engine)"
+                autocomplete="off"
+              />
+              <button id="btn-toggle-key-visibility" class="mini-btn" type="button">👁️ Show</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="select-model">Model Selection</label>
+            <select id="select-model" class="form-control">
+              <option value="gemini-1.5-flash">Gemini 1.5 Flash (Recommended - Fast &amp; Free)</option>
+              <option value="gemini-2.0-flash">Gemini 2.0 Flash (Experimental)</option>
+              <option value="gemini-1.5-pro">Gemini 1.5 Pro (In-depth Reasoning)</option>
+            </select>
+          </div>
+
+          <div class="form-actions-inline">
+            <button id="btn-test-api" class="secondary-btn" type="button">
+              🔍 Test API Connection
+            </button>
+            <span id="api-test-status" class="status-msg"></span>
+          </div>
+        </section>
+
+        <!-- 2. Local User Profile -->
+        <section class="settings-card">
+          <div class="card-title-row">
+            <span class="card-icon">👤</span>
+            <div>
+              <h2>Local User Profile</h2>
+              <p class="card-subtitle">Saved securely on your device (chrome.storage.local) for safe autofill and draft signatures.</p>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="input-name">Full Name</label>
+              <input type="text" id="input-name" class="form-control" placeholder="Dhanusri" />
+            </div>
+            <div class="form-group">
+              <label for="input-role">Job Title / Role</label>
+              <input type="text" id="input-role" class="form-control" placeholder="Software Engineer" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="input-email">Email Address</label>
+              <input type="email" id="input-email" class="form-control" placeholder="dhanusri@example.com" />
+            </div>
+            <div class="form-group">
+              <label for="input-phone">Phone Number</label>
+              <input type="tel" id="input-phone" class="form-control" placeholder="+91 98765 43210" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-location">Location / City</label>
+            <input type="text" id="input-location" class="form-control" placeholder="Bengaluru, Karnataka, India" />
+          </div>
+
+          <div class="form-group">
+            <label for="select-pref-lang">Preferred Summary &amp; Chat Language</label>
+            <select id="select-pref-lang" class="form-control">
+              <option value="English">English</option>
+              <option value="Hinglish">Hinglish (Conversational Hindi + English blend)</option>
+            </select>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right Column: Safety Rules & Saved Skills -->
+      <div class="settings-column">
+
+        <!-- 3. Safety Rules -->
+        <section class="settings-card">
+          <div class="card-title-row">
+            <span class="card-icon">🛡️</span>
+            <div>
+              <h2>Safety &amp; Privacy Rules (safety.js)</h2>
+              <p class="card-subtitle">Active guards that prevent automation on banking, sensitive credentials, and payment pages.</p>
+            </div>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <strong>Strict Protection Mode</strong>
+              <p>Completely blocks browser actions on pages with password or credit card inputs.</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="check-strict-mode" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="switch-row">
+            <div class="switch-info">
+              <strong>Auto-Badge Interactive Elements</strong>
+              <p>Automatically shows [1], [2], [3] visual pins when Action Map is opened.</p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="check-auto-badge" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label>Protected Domains (Hardcoded in safety.js)</label>
+            <div class="tag-cloud">
+              <span class="safe-tag">hdfcbank.com</span>
+              <span class="safe-tag">icicibank.com</span>
+              <span class="safe-tag">sbi.co.in</span>
+              <span class="safe-tag">chase.com</span>
+              <span class="safe-tag">paypal.com</span>
+              <span class="safe-tag">razorpay.com</span>
+              <span class="safe-tag">accounts.google.com</span>
+              <span class="safe-tag">chrome://*</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="input-custom-blacklist">Custom Domain Blacklist (One domain per line)</label>
+            <textarea
+              id="input-custom-blacklist"
+              class="form-control textarea-small"
+              placeholder="internal-corp.net&#10;private-portal.com"
+            ></textarea>
+          </div>
+        </section>
+
+        <!-- 4. Saved One-Click Skills Manager -->
+        <section class="settings-card">
+          <div class="card-title-row">
+            <span class="card-icon">⚡</span>
+            <div>
+              <h2>Saved One-Click Skills</h2>
+              <p class="card-subtitle">Manage reusable custom skills accessible directly in the side panel.</p>
+            </div>
+          </div>
+
+          <div class="skills-manager-list" id="skills-manager-container">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Add New Skill Form -->
+          <div class="add-skill-box">
+            <h3>Add New Custom Skill</h3>
+            <div class="form-group">
+              <input type="text" id="new-skill-name" class="form-control" placeholder="Skill Name (e.g., 'Extract Contact Info')" />
+            </div>
+            <div class="form-group">
+              <textarea id="new-skill-prompt" class="form-control textarea-small" placeholder="Prompt instruction to execute on the active page..."></textarea>
+            </div>
+            <button id="btn-add-skill" class="secondary-btn" type="button">
+              + Add Skill
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="save-toast" class="toast-message" style="display: none;">
+      ✓ Settings saved successfully!
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

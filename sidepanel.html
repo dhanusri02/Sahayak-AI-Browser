@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sahayak - AI Browser Agent</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sahayak-container">
+    <!-- Top Header & Status Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-avatar">
+          <span class="avatar-sparkle">✨</span>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title">
+            <span class="title-text">Sahayak</span>
+            <span class="badge-tag">AI Agent</span>
+          </div>
+          <span class="brand-subtitle">Smart Browser Side-Panel</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-open-options" class="icon-btn" title="Settings & Profile" aria-label="Settings">
+          ⚙️
+        </button>
+      </div>
+    </header>
+
+    <!-- Active Page Context Badge & Safety Bar -->
+    <section class="context-bar">
+      <div class="context-page" id="page-context-pill" title="Click to refresh context">
+        <img id="page-favicon" class="page-favicon" src="" alt="Page icon" style="display: none;">
+        <span class="page-favicon-fallback" id="page-favicon-fallback">🌐</span>
+        <span class="page-title-text" id="page-title">Detecting active page...</span>
+        <button id="btn-refresh-page" class="mini-icon-btn" title="Refresh Page Context">🔄</button>
+      </div>
+
+      <div class="context-indicators">
+        <span class="status-pill status-safe" id="safety-status-pill" title="Safety evaluation">
+          <span class="pill-dot"></span>
+          <span id="safety-status-label">Safe</span>
+        </span>
+        <span class="status-pill status-model" id="model-status-pill" title="AI Inference Engine">
+          <span id="model-status-label">✨ Gemini Ready</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" data-tab="tab-summary" role="tab" aria-selected="true">
+        <span class="tab-icon">📝</span>
+        <span class="tab-label">Summary</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-chat" role="tab" aria-selected="false">
+        <span class="tab-icon">💬</span>
+        <span class="tab-label">Chat</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-selection" role="tab" aria-selected="false">
+        <span class="tab-icon">✂️</span>
+        <span class="tab-label">Select</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-vision" role="tab" aria-selected="false">
+        <span class="tab-icon">📸</span>
+        <span class="tab-label">Vision</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-actions" role="tab" aria-selected="false">
+        <span class="tab-icon">🤖</span>
+        <span class="tab-label">Actions</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-profile" role="tab" aria-selected="false">
+        <span class="tab-icon">👤</span>
+        <span class="tab-label">Profile</span>
+      </button>
+    </nav>
+
+    <!-- Main Content Tab Panels -->
+    <main class="tab-content-area">
+
+      <!-- ================= 1. SUMMARY PANEL ================= -->
+      <section id="tab-summary" class="tab-panel active">
+        <div class="panel-card">
+          <div class="card-header">
+            <span class="card-title">Page & YouTube Summarizer</span>
+            <div class="lang-toggle-group">
+              <button class="lang-chip active" data-lang="English" id="lang-en">English</button>
+              <button class="lang-chip" data-lang="Hinglish" id="lang-hi">Hinglish</button>
+            </div>
+          </div>
+
+          <div class="chip-options" id="summary-modes">
+            <button class="mode-chip active" data-mode="tldr">⚡ Quick TL;DR</button>
+            <button class="mode-chip" data-mode="takeaways">📌 Key Takeaways</button>
+            <button class="mode-chip" data-mode="actionable">🎯 Action Items</button>
+            <button class="mode-chip" data-mode="youtube" id="mode-youtube-chip" style="display: none;">▶️ Video Chapters</button>
+          </div>
+
+          <!-- YouTube Video Alert Banner -->
+          <div id="youtube-banner" class="alert-banner info" style="display: none;">
+            <span class="banner-icon">▶️</span>
+            <div class="banner-text">
+              <strong id="yt-banner-title">YouTube Video Detected</strong>
+              <span id="yt-banner-channel">Ready to summarize video timestamps & description</span>
+            </div>
+          </div>
+
+          <button id="btn-generate-summary" class="primary-btn glow-btn">
+            <span class="btn-icon">⚡</span>
+            <span class="btn-text">Generate Summary</span>
+          </button>
+        </div>
+
+        <!-- Summary Result Box -->
+        <div class="result-card" id="summary-result-box" style="display: none;">
+          <div class="result-header">
+            <span class="result-title">Summary Output</span>
+            <div class="result-actions">
+              <span class="stat-badge" id="summary-stats">0 words</span>
+              <button id="btn-copy-summary" class="mini-btn" title="Copy to clipboard">📋 Copy</button>
+            </div>
+          </div>
+          <div class="markdown-body" id="summary-content"></div>
+        </div>
+      </section>
+
+      <!-- ================= 2. CHAT WITH PAGE PANEL ================= -->
+      <section id="tab-chat" class="tab-panel">
+        <div class="grounding-notice">
+          <span class="notice-icon">🔒</span>
+          <span>Answers are grounded <strong>strictly</strong> in the active page context.</span>
+        </div>
+
+        <div class="chat-messages-container" id="chat-messages">
+          <div class="chat-bubble assistant-bubble">
+            <div class="bubble-header">
+              <span class="bubble-name">Sahayak</span>
+              <span class="bubble-time">Just now</span>
+            </div>
+            <div class="bubble-content">
+              Namaste! I've loaded this page. Ask me any specific question about its content, figures, or claims.
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-suggestions" id="chat-suggestions">
+          <button class="suggestion-chip">What is the main topic?</button>
+          <button class="suggestion-chip">Are there any deadlines or requirements?</button>
+          <button class="suggestion-chip">Summarize in 3 bullet points</button>
+        </div>
+
+        <form class="chat-input-row" id="chat-form">
+          <input
+            type="text"
+            id="chat-input"
+            class="chat-text-input"
+            placeholder="Ask anything about this page..."
+            autocomplete="off"
+            required
+          />
+          <button type="submit" id="btn-send-chat" class="send-btn" title="Send message">
+            ➤
+          </button>
+        </form>
+      </section>
+
+      <!-- ================= 3. SELECTION TOOLS PANEL ================= -->
+      <section id="tab-selection" class="tab-panel">
+        <div class="panel-card">
+          <div class="card-header">
+            <span class="card-title">Selected Web Content</span>
+            <button id="btn-refresh-selection" class="mini-btn">🔄 Refresh</button>
+          </div>
+          <div class="selection-quote" id="selected-text-preview">
+            <span class="placeholder-text">Highlight any text on the webpage to explain, translate, or draft replies.</span>
+          </div>
+
+          <div class="selection-actions-grid">
+            <button id="btn-explain-selection" class="action-tile">
+              <span class="tile-icon">💡</span>
+              <span class="tile-title">Explain Simply</span>
+              <span class="tile-desc">ELI5 break-down</span>
+            </button>
+            <button id="btn-translate-hinglish" class="action-tile">
+              <span class="tile-icon">🇮🇳</span>
+              <span class="tile-title">To Hinglish</span>
+              <span class="tile-desc">Hindi + English blend</span>
+            </button>
+            <button id="btn-translate-english" class="action-tile">
+              <span class="tile-icon">🌐</span>
+              <span class="tile-title">To English</span>
+              <span class="tile-desc">Clear formal phrasing</span>
+            </button>
+            <button id="btn-draft-reply" class="action-tile">
+              <span class="tile-icon">✍️</span>
+              <span class="tile-title">Draft Reply</span>
+              <span class="tile-desc">Professional email/response</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="result-card" id="selection-result-box" style="display: none;">
+          <div class="result-header">
+            <span class="result-title" id="selection-result-title">Result</span>
+            <button id="btn-copy-selection" class="mini-btn">📋 Copy</button>
+          </div>
+          <div class="markdown-body" id="selection-result-content"></div>
+        </div>
+      </section>
+
+      <!-- ================= 4. SCREEN VISION PANEL ================= -->
+      <section id="tab-vision" class="tab-panel">
+        <div class="panel-card">
+          <div class="card-header">
+            <span class="card-title">Visible Screen Vision</span>
+            <button id="btn-capture-screen" class="primary-btn mini">📸 Capture Screen</button>
+          </div>
+
+          <div class="screenshot-preview-container" id="screenshot-container">
+            <div class="empty-screenshot-state" id="empty-screenshot-state">
+              <span class="empty-icon">🖼️</span>
+              <span>Click "Capture Screen" to inspect charts, visible elements, or errors</span>
+            </div>
+            <img id="screenshot-img" class="screenshot-img" alt="Captured screen" style="display: none;" />
+          </div>
+
+          <div class="vision-prompt-area">
+            <input
+              type="text"
+              id="vision-query-input"
+              class="chat-text-input"
+              placeholder="Ask a question about this screen (e.g. 'Read the text in the chart')"
+            />
+            <button id="btn-ask-vision" class="primary-btn glow-btn" disabled>
+              <span>Ask Screen Question</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="result-card" id="vision-result-box" style="display: none;">
+          <div class="result-header">
+            <span class="result-title">Visual Analysis</span>
+            <button id="btn-copy-vision" class="mini-btn">📋 Copy</button>
+          </div>
+          <div class="markdown-body" id="vision-result-content"></div>
+        </div>
+      </section>
+
+      <!-- ================= 5. ACTION MAP & AGENT EXECUTION PANEL ================= -->
+      <section id="tab-actions" class="tab-panel">
+        <div class="panel-card">
+          <div class="card-header">
+            <span class="card-title">Interactive Action Map</span>
+            <div class="badge-toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-page-badges">
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-label">Badges on Page</span>
+            </div>
+          </div>
+
+          <div class="action-map-toolbar">
+            <button id="btn-scan-actions" class="primary-btn mini">
+              <span>🔍 Scan Elements</span>
+            </button>
+            <div class="action-filters" id="action-filters">
+              <button class="filter-chip active" data-filter="all">All (<span id="count-all">0</span>)</button>
+              <button class="filter-chip" data-filter="BUTTON">Buttons (<span id="count-buttons">0</span>)</button>
+              <button class="filter-chip" data-filter="INPUT">Inputs (<span id="count-inputs">0</span>)</button>
+              <button class="filter-chip" data-filter="A">Links (<span id="count-links">0</span>)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Step-by-Step Agent Proposal Card (Human in the Loop) -->
+        <div class="panel-card agent-goal-card">
+          <div class="card-header">
+            <span class="card-title">Agent Action Planner</span>
+            <span class="pill-badge pill-human">User Approval Required</span>
+          </div>
+          <div class="goal-input-row">
+            <input
+              type="text"
+              id="agent-goal-input"
+              class="chat-text-input"
+              placeholder="e.g., 'Fill contact details from profile and submit'"
+            />
+            <button id="btn-plan-action" class="primary-btn glow-btn mini">
+              Plan Next Step
+            </button>
+          </div>
+
+          <!-- Pending Action Approval Card -->
+          <div id="action-approval-card" class="action-approval-card" style="display: none;">
+            <div class="approval-header">
+              <span class="step-badge" id="approval-step-num">Step 1</span>
+              <span class="approval-status-pill" id="approval-safety-badge">✓ Safe</span>
+            </div>
+            <div class="approval-body">
+              <div class="approval-field">
+                <span class="field-label">Target:</span>
+                <span class="field-value" id="approval-target-element">[3] Button: Submit</span>
+              </div>
+              <div class="approval-field">
+                <span class="field-label">Proposed Action:</span>
+                <strong class="field-value text-accent" id="approval-action-desc">Click submit</strong>
+              </div>
+              <div class="approval-field">
+                <span class="field-label">Reasoning:</span>
+                <span class="field-value text-muted" id="approval-reasoning">Advancing the form after validation.</span>
+              </div>
+            </div>
+            <div class="approval-actions">
+              <button id="btn-approve-action" class="action-btn-approve">
+                ✓ Approve &amp; Execute
+              </button>
+              <button id="btn-reject-action" class="action-btn-reject">
+                ✗ Reject / Skip
+              </button>
+              <button id="btn-highlight-target" class="action-btn-highlight" title="Scroll & Highlight on page">
+                👁️ View
+              </button>
+            </div>
+          </div>
+
+          <!-- Execution Feedback Toast -->
+          <div id="action-execution-toast" class="action-toast" style="display: none;"></div>
+        </div>
+
+        <!-- Numbered Action Map List -->
+        <div class="action-elements-list" id="action-elements-container">
+          <div class="empty-state">
+            <span class="empty-icon">🔢</span>
+            <span>Click "Scan Elements" to detect buttons, forms, and links on this page.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. PROFILE & SKILLS PANEL ================= -->
+      <section id="tab-profile" class="tab-panel">
+        <div class="panel-card">
+          <div class="card-header">
+            <span class="card-title">Local User Profile</span>
+            <button id="btn-edit-profile-link" class="mini-btn">✏️ Edit Settings</button>
+          </div>
+          <div class="profile-chips-grid" id="profile-summary-grid">
+            <div class="profile-chip">
+              <span class="chip-label">Name</span>
+              <strong class="chip-val" id="prof-name">Dhanusri</strong>
+            </div>
+            <div class="profile-chip">
+              <span class="chip-label">Email</span>
+              <strong class="chip-val" id="prof-email">dhanusri@example.com</strong>
+            </div>
+            <div class="profile-chip">
+              <span class="chip-label">Phone</span>
+              <strong class="chip-val" id="prof-phone">+91 98765 43210</strong>
+            </div>
+            <div class="profile-chip">
+              <span class="chip-label">Preferred Lang</span>
+              <strong class="chip-val" id="prof-lang">English</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="card-header">
+            <span class="card-title">Saved One-Click Skills</span>
+            <span class="pill-badge">Local Automation</span>
+          </div>
+          <div class="skills-list" id="saved-skills-container">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+      <div class="spinner-core"></div>
+      <span class="loading-text" id="loading-text">Sahayak is reasoning...</span>
+    </div>
+  </div>
+
+  <script src="safety.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>
